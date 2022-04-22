@@ -22,7 +22,9 @@ contract NFTini {
         albumId.increment();
     }
 
-    function addCard(uint id, string memory _card) public {
-
+    function addCard(uint _id, string memory _card) public {
+        albumContract = Album(albumIdToAlbumAddress[_id]);
+        albumContract.addNewCard(_card);
     }
+
 }

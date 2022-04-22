@@ -5,7 +5,8 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 // This is the main building block for smart contracts.
-contract Album is ERC1155, Ownable {
+// This is the main building block for smart contracts.
+contract Album is ERC1155 {
 
     struct Card {
         string name;
@@ -14,19 +15,14 @@ contract Album is ERC1155, Ownable {
     string name;
     string[] cards;
     bool allowExpansion;
-    address owner;
 
-    constructor(
-        string memory _uri,
-        string memory _name,
-        string[] memory _cards,
-        address _owner) ERC1155(_uri) {
+    constructor(string memory _uri, string memory _name, string[] memory _cards) ERC1155(_uri) {
         name = _name;
         cards = _cards;
-        owner = _owner;
+        allowExpansion = true;
     }
 
-    function addNewCard(string memory _card) public onlyOwner {
+    function addNewCard(string memory _card) public {
         cards.push(_card);
     }
 }
