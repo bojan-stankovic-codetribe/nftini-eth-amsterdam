@@ -1,28 +1,38 @@
 //SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
+import './Structures.sol';
 
 // This is the main building block for smart contracts.
 // This is the main building block for smart contracts.
-contract Album is ERC1155 {
+contract Album is ERC1155, Ownable {
 
-    struct Card {
-        string name;
-    }
+    string public name;
+    Structures.Card[] public cards;
+    bool public allowExpansion;
 
-    string name;
-    string[] cards;
-    bool allowExpansion;
-
-    constructor(string memory _uri, string memory _name, string[] memory _cards) ERC1155(_uri) {
+    constructor(
+        string memory _uri,
+        string memory _name,
+        Structures.Card[] memory _cards
+    ) ERC1155(_uri) {
         name = _name;
-        cards = _cards;
+        for (uint256 index = 0; index < _cards.length; index++) {
+            cards.push(_cards[index]);
+        }
         allowExpansion = true;
     }
 
-    function addNewCard(string memory _card) public {
-        cards.push(_card);
+    function addNewCards(Structures.Card[] memory _cards) public onlyOwner {
+        require(allowExpansion == true, "Expansion of album is not allowed");
+        for(uint256 index = 0; index < _cards.length; index++) {
+            cards.push(_cards[index]);
+        }
+    }
+
+    function completeAlbum(address _creator) public onlyOwner {
+        allowExpansion = false;
     }
 }
