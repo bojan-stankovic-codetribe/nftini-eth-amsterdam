@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-etherscan");
+require("@nomiclabs/hardhat-waffle");
 require("dotenv").config();
 
 // The next line is part of the sample project, you don't need it in your

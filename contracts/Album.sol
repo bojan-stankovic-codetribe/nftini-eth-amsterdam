@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: UNLICENSED
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
@@ -15,26 +15,26 @@ contract Album is ERC1155, Ownable, ReentrancyGuard {
 
     string public name;
     uint256 packSize;
-    uint256 packPrice;
+    uint256 public packPrice;
     Structures.Card[] public cards;
     bool public allowExpansion;
     uint256 NUM_CLASSES;
-    uint16[] cardProbabilities;
+    uint16[] public cardProbabilities;
     uint256 constant INVERSE_BASIS_POINT = 10000;
 
     constructor(
-        string memory _uri,
         string memory _name,
         uint256 _packSize,
         uint256 _packPrice,
         Structures.Card[] memory _cards,
         bool _allowExpansion
-    ) ERC1155(_uri) {
+    ) ERC1155("https://ipfs.infura.io/ipfs/{id}") {
         name = _name;
         packSize = _packSize;
         packPrice = _packPrice;
         for (uint256 index = 0; index < _cards.length; index++) {
             cards.push(_cards[index]);
+            cardProbabilities.push(uint16(_cards[index].rarity));
         }
         allowExpansion = _allowExpansion;
     }
@@ -50,26 +50,18 @@ contract Album is ERC1155, Ownable, ReentrancyGuard {
         require(!allowExpansion, "Album expansion is already disabled.");
         allowExpansion = false;
         NUM_CLASSES = cards.length;
-        cardProbabilities = new uint16[](NUM_CLASSES);
     }
 
     function mint(
         address _toAddress,
-        uint256 _amount,
         bytes memory /* _data */
-    ) internal nonReentrant {
+    ) external nonReentrant {
         require(allowExpansion == false, "Album is not complete yet");
         // Iterate over the quantity of boxes specified
-        for (uint256 i = 0; i < _amount; i++) {
+        for (uint256 i = 0; i < packSize; i++) {
             // Iterate over the box's set quantity
-            uint256 quantitySent = 0;
-
-            // Process non-guaranteed ids
-            while (quantitySent < packSize) {
-                uint256 cardToSend = _pickRandomCard(cardProbabilities);
-                _mint(_toAddress, cardToSend, 1, "");
-                quantitySent += 1;
-            }
+            uint256 cardToSend = i;
+            _mint(_toAddress, cardToSend, 1, "");
         }
     }
 
@@ -91,7 +83,12 @@ contract Album is ERC1155, Ownable, ReentrancyGuard {
     }
 
     function _random() internal view returns (uint256) {
-        uint256 randomNumber = uint256(keccak256(abi.encodePacked(blockhash(block.number - 1), msg.sender)));
-        return randomNumber;
+        uint number = block.timestamp;
+        return uint(keccak256(abi.encodePacked(block.timestamp,block.difficulty, msg.sender))) % number;
     }
+
+    function getCardProbabilities() public view returns (uint16[] memory) {
+        return cardProbabilities;
+    }
+
 }

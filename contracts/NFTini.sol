@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: UNLICENSED
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/utils/Counters.sol';
@@ -20,8 +20,7 @@ contract NFTini {
         bool _allowExpansion,
         Structures.Card[] memory _cards
     ) public {
-        string memory _uri = "https://abcoathup.github.io/SampleERC1155/api/token/{id}.json";
-        Album albumContract = new Album(_uri, _name, _packSize, _packPrice, _cards, _allowExpansion);
+        Album albumContract = new Album(_name, _packSize, _packPrice, _cards, _allowExpansion);
         albumIdToAlbumAddress[albumId.current()] = address(albumContract);
         albumOwners[address(albumContract)] = msg.sender;
         albumId.increment();
@@ -40,6 +39,21 @@ contract NFTini {
 
     function getAlbumContract(uint256 _id) private view returns(Album) {
         return Album(albumIdToAlbumAddress[_id]);
+    }
+
+    function getPack(uint256 _id) public {
+        Album albumContract = getAlbumContract(_id);
+        albumContract.mint(msg.sender, "");
+    }
+
+    function getCardProbabilities(uint256 _id) public view returns(uint16[] memory) {
+        Album albumContract = getAlbumContract(_id);
+        return albumContract.getCardProbabilities();
+    }
+
+    function getPackPrice(uint256 _id) public view returns(uint) {
+        Album albumContract = getAlbumContract(_id);
+        return albumContract.packPrice();
     }
 
 }
