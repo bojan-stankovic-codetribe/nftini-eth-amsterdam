@@ -59,9 +59,10 @@ export const MetaMaskProvider = ({ children }) => {
             isLoading,
             connect,
             disconnect,
-            shouldDisable
+            shouldDisable,
+            library
         }),
-        [isActive, isLoading, shouldDisable, account]
+        [isActive, isLoading, shouldDisable, account, library]
     )
 
     return <MetaMaskContext.Provider value={values}>{children}</MetaMaskContext.Provider>
