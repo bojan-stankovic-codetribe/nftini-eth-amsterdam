@@ -1,16 +1,25 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { Dapp } from "./components/Dapp";
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
+import App from './App'
 
-// We import bootstrap here, but you can remove if you want
-import "bootstrap/dist/css/bootstrap.css";
+import Web3 from 'web3'
+import { Web3ReactProvider } from '@web3-react/core'
+import { MetaMaskProvider } from './hooks/metamask'
 
-// This is the entry point of your application, but it just renders the Dapp
-// react component. All of the logic is contained in it.
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+function getLibrary(provider, connector) {
+  return new Web3(provider)
+}
 
 ReactDOM.render(
   <React.StrictMode>
-    <Dapp />
+    <Web3ReactProvider getLibrary={getLibrary}>
+      <MetaMaskProvider>
+        <App />
+      </MetaMaskProvider>
+    </Web3ReactProvider>
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById('root')
 );
