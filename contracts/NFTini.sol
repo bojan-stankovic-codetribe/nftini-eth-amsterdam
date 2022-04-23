@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/utils/Counters.sol';
 import './Album.sol';
@@ -29,7 +29,7 @@ contract NFTini {
     function completeAlbum(uint _id) public {
         Album albumContract = getAlbumContract(_id);
         require(msg.sender == albumOwners[address(albumContract)], "Only creator of album can complete it");
-        albumContract.completeAlbum(msg.sender);
+        albumContract.completeAlbum();
     }
 
     function getAlbumContract(uint256 _id) private view returns(Album) {

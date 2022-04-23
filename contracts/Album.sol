@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
@@ -32,7 +32,7 @@ contract Album is ERC1155, Ownable {
         }
     }
 
-    function completeAlbum(address _creator) public onlyOwner {
+    function completeAlbum() public onlyOwner {
         allowExpansion = false;
     }
 }
