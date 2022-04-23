@@ -9,7 +9,6 @@ import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import './Structures.sol';
 
 // This is the main building block for smart contracts.
-// This is the main building block for smart contracts.
 contract Album is ERC1155, Ownable, ReentrancyGuard {
 
     using SafeMath for uint256;
@@ -28,7 +27,8 @@ contract Album is ERC1155, Ownable, ReentrancyGuard {
         string memory _name,
         uint256 _packSize,
         uint256 _packPrice,
-        Structures.Card[] memory _cards
+        Structures.Card[] memory _cards,
+        bool _allowExpansion
     ) ERC1155(_uri) {
         name = _name;
         packSize = _packSize;
@@ -36,17 +36,18 @@ contract Album is ERC1155, Ownable, ReentrancyGuard {
         for (uint256 index = 0; index < _cards.length; index++) {
             cards.push(_cards[index]);
         }
-        allowExpansion = true;
+        allowExpansion = _allowExpansion;
     }
 
     function addNewCards(Structures.Card[] memory _cards) public onlyOwner {
-        require(allowExpansion == true, "Expansion of album is not allowed");
+        require(allowExpansion, "Expansion of album is not allowed");
         for(uint256 index = 0; index < _cards.length; index++) {
             cards.push(_cards[index]);
         }
     }
 
     function completeAlbum() public onlyOwner {
+        require(!allowExpansion, "Album expansion is already disabled.");
         allowExpansion = false;
         NUM_CLASSES = cards.length;
         cardProbabilities = new uint16[](NUM_CLASSES);

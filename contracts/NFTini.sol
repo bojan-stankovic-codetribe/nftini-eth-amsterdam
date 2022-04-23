@@ -17,10 +17,11 @@ contract NFTini {
         string memory _name,
         uint256 _packSize,
         uint256 _packPrice,
+        bool _allowExpansion,
         Structures.Card[] memory _cards
     ) public {
         string memory _uri = "https://abcoathup.github.io/SampleERC1155/api/token/{id}.json";
-        Album albumContract = new Album(_uri, _name, _packSize, _packPrice, _cards);
+        Album albumContract = new Album(_uri, _name, _packSize, _packPrice, _cards, _allowExpansion);
         albumIdToAlbumAddress[albumId.current()] = address(albumContract);
         albumOwners[address(albumContract)] = msg.sender;
         albumId.increment();
