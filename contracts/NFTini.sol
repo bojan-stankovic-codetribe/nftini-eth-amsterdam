@@ -13,9 +13,11 @@ contract NFTini {
     mapping(address => address) public albumOwners;
     Counters.Counter public albumId;
 
-    function createAlbum(string memory _name, Structures.Card[] memory _cards) public {
+    function createAlbum(string memory _name,
+                        Structures.Card[] memory _cards,
+                        bool _allowExpansion) public {
         string memory _uri = "https://abcoathup.github.io/SampleERC1155/api/token/{id}.json";
-        Album albumContract = new Album(_uri, _name, _cards);
+        Album albumContract = new Album(_uri, _name, _cards, _allowExpansion);
         albumIdToAlbumAddress[albumId.current()] = address(albumContract);
         albumOwners[address(albumContract)] = msg.sender;
         albumId.increment();
