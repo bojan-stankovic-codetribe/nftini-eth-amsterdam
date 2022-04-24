@@ -15,21 +15,18 @@ contract NFTini {
 
     function createAlbum(
         string memory _name,
-        uint256 _packSize,
-        uint256 _packPrice,
-        bool _allowExpansion,
-        Structures.Card[] memory _cards
+        string[] memory _cards
     ) public {
-        Album albumContract = new Album(_name, _packSize, _packPrice, _cards, _allowExpansion);
+        Album albumContract = new Album(_name, _cards);
         albumIdToAlbumAddress[albumId.current()] = address(albumContract);
         albumOwners[address(albumContract)] = msg.sender;
         albumId.increment();
     }
 
-    function addCard(uint _id, Structures.Card[] memory _cards) public {
-        Album albumContract = getAlbumContract(_id);
-        albumContract.addNewCards(_cards);
-    }
+//    function addCard(uint _id, Structures.Card[] memory _cards) public {
+//        Album albumContract = getAlbumContract(_id);
+//        albumContract.addNewCards(_cards);
+//    }
 
     function completeAlbum(uint _id) public {
         Album albumContract = getAlbumContract(_id);

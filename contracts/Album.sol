@@ -16,40 +16,33 @@ contract Album is ERC1155, Ownable, ReentrancyGuard {
     string public name;
     uint256 packSize;
     uint256 public packPrice;
-    Structures.Card[] public cards;
     bool public allowExpansion;
     uint256 NUM_CLASSES;
     uint16[] public cardProbabilities;
     uint256 constant INVERSE_BASIS_POINT = 10000;
+    mapping(uint => string) tokenURI;
 
     constructor(
         string memory _name,
-        uint256 _packSize,
-        uint256 _packPrice,
-        Structures.Card[] memory _cards,
-        bool _allowExpansion
+        string[] memory _cards
     ) ERC1155("https://ipfs.infura.io/ipfs/{id}") {
         name = _name;
-        packSize = _packSize;
-        packPrice = _packPrice;
         for (uint256 index = 0; index < _cards.length; index++) {
-            cards.push(_cards[index]);
-            cardProbabilities.push(uint16(_cards[index].rarity));
+            tokenURI[index] = _cards[index];
+            cardProbabilities.push(10);
         }
-        allowExpansion = _allowExpansion;
     }
 
-    function addNewCards(Structures.Card[] memory _cards) public onlyOwner {
-        require(allowExpansion, "Expansion of album is not allowed");
-        for(uint256 index = 0; index < _cards.length; index++) {
-            cards.push(_cards[index]);
-        }
-    }
+//    function addNewCards(string[] memory _cards) public onlyOwner {
+//        require(allowExpansion, "Expansion of album is not allowed");
+//        for(uint256 index = 0; index < _cards.length; index++) {
+//            cards.push(_cards[index]);
+//        }
+//    }
 
     function completeAlbum() public onlyOwner {
         require(!allowExpansion, "Album expansion is already disabled.");
         allowExpansion = false;
-        NUM_CLASSES = cards.length;
     }
 
     function mint(
@@ -58,7 +51,7 @@ contract Album is ERC1155, Ownable, ReentrancyGuard {
     ) external nonReentrant {
         require(allowExpansion == false, "Album is not complete yet");
         // Iterate over the quantity of boxes specified
-        for (uint256 i = 0; i < packSize; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             // Iterate over the box's set quantity
             uint256 cardToSend = i;
             _mint(_toAddress, cardToSend, 1, "");
@@ -89,6 +82,10 @@ contract Album is ERC1155, Ownable, ReentrancyGuard {
 
     function getCardProbabilities() public view returns (uint16[] memory) {
         return cardProbabilities;
+    }
+
+    function uri(uint256 _id) public view virtual override returns (string memory) {
+        return tokenURI[_id];
     }
 
 }
