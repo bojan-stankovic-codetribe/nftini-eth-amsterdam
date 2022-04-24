@@ -13,6 +13,8 @@ contract NFTini {
     mapping(address => address) public albumOwners;
     Counters.Counter public albumId;
 
+    event AlbumCreated(uint256 indexed id, string name);
+
     function createAlbum(string memory _name,
                         Structures.Card[] memory _cards,
                         bool _allowExpansion) public {
@@ -20,6 +22,7 @@ contract NFTini {
         Album albumContract = new Album(_uri, _name, _cards, _allowExpansion);
         albumIdToAlbumAddress[albumId.current()] = address(albumContract);
         albumOwners[address(albumContract)] = msg.sender;
+        emit AlbumCreated(albumId.current(), _name);
         albumId.increment();
     }
 
