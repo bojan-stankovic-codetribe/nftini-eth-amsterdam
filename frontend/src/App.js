@@ -68,15 +68,17 @@ function App() {
             Disconnect MetaMask<img src="images/noun_waving_3666509.svg" width="50" height="50"/>
           </Button>
         }
-        {isActive &&
-            <CreateAlbum/>
-        }
+
         <div className="mt-2 mb-2">
           Connected Account: { isActive ? account : '' }
         </div>
       </header>
 
       <Album all_cards={cards} user_cards={[1, 2, 3, 6, 7, 8, 10]}/>
+
+      {isActive &&
+          <CreateAlbum/>
+      }
     </div>
   );
 }
